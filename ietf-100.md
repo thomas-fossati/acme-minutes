@@ -108,7 +108,7 @@ See slides (#6) for open issues.
 | ----|--------|-----|----------|
 | Thomas | [acme-star](https://datatracker.ietf.org/meeting/100/materials/slides-100-acme-acme-star/) | [link](https://youtu.be/n_pUc9XfjWs?t=4767) | [ietf-acme-star-01](https://tools.ietf.org/html/draft-ietf-acme-star-01) |
 
-See slides (#1-...) for a summary of the changes since Prague.
+See slides (#3-8) for a summary of the changes since Prague.
 
 JP: with my use case which is not domain names.  I do appreciate the de-lurkage that you did thus far.  The term DNO, and the notion that there is a domain name owner that cancels an automatic renewal still doesn't fit the language of my use case, but I'd love doing exactly what you are doing.  So, just a little bit less specificy of the domain name part of this and STIR would totally use this.  Happy to help.
 
