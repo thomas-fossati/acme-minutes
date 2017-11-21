@@ -108,3 +108,22 @@ See slides (#6) for open issues.
 | ----|--------|-----|----------|
 | Thomas | [acme-star](https://datatracker.ietf.org/meeting/100/materials/slides-100-acme-acme-star/) | [link](https://youtu.be/n_pUc9XfjWs?t=4767) | [ietf-acme-star-01](https://tools.ietf.org/html/draft-ietf-acme-star-01) |
 
+See slides (#1-...) for a summary of the changes since Prague.
+
+JP: with my use case which is not domain names.  I do appreciate the de-lurkage that you did thus far.  The term DNO, and the notion that there is a domain name owner that cancels an automatic renewal still doesn't fit the language of my use case, but I'd love doing exactly what you are doing.  So, just a little bit less specificy of the domain name part of this and STIR would totally use this.  Happy to help.
+
+TF: OK, thanks.
+
+TF: interaction with certificate transparency is TBD.  Diego went to the TRANS WG session to present the problem.
+
+DL: No conclusive answer whether this would pose a problem to CT or not.  What I've heard from Melinda was they are OK for documenting the problem and solution space.  What is not completely clear is where this work would be done since TRANS may be closing down in the next few  months.
+
+DL: If other that were there (EKR?) could share their impression as well?  
+
+EKR: AD hat off.  Given clock skews forces short-term to be not below 7-days-ish, the increase in ingestion rate should be fine. So, no actual problem here, you should just go forward.
+
+RB: CT shall arrive at some solution for short-lived certificates anyway, regardless of this document, because there are multiple different fronts from which this is coming.  So it seems it's their problem, not a problem for this document to solve.
+
+RB: One quick question out of curiosity: any CAs interested in deploying this?
+
+TF: Yes, Digicert contacted us; they said they have "short" as short as 8 hours.
