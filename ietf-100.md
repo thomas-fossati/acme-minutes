@@ -206,8 +206,77 @@ RB: Hope to get this done well before March.
 ## Telephony
 | Who | Slides | A/V | Draft(s) |
 | ----|--------|-----|----------|
-| Mary | [token-identifier-and-challenges](https://datatracker.ietf.org/meeting/100/materials/slides-100-acme-acme-token-identifier-and-challenges/) | [link](https://youtu.be/n_pUc9XfjWs?t=3669) | [barnes-acme-token-challenge-00](https://tools.ietf.org/html/draft-barnes-acme-token-challenge-00) & [barnes-acme-service-provider-code-00](https://tools.ietf.org/html/draft-barnes-acme-service-provider-code-00) & [ietf-acme-service-provider-02](https://tools.ietf.org/html/draft-ietf-acme-service-provider-02) |
 | Jon | [acme-stir](https://datatracker.ietf.org/meeting/100/materials/slides-100-acme-acme-stir/) | [link](https://youtu.be/n_pUc9XfjWs?t=3050) | [peterson-acme-authority-token-00](https://tools.ietf.org/html/draft-peterson-acme-authority-token-00) & [ietf-acme-telephone-01](https://tools.ietf.org/html/draft-ietf-acme-telephone-01) |
+
+JP: both I and Mary are presenting basically the same material and trying to pose the same questions.  Trying to cover both as much as I can.
+
+JP: in STIR we have defined certificate profiles and a certain number of certificate extension.  Two branches: TN (telephone numbers, maybe associated with an end-user) and SPC (service provider codes).  It'd be very difficult, maybe impossible to administer those without something like ACME.
+
+See slides (#3-7) for a description of how STIR works, and how STIR plans to make use of ACME, and what the alternatives to prove identities are.
+
+JP: Generalising off the telephone use cases: an ACME server has a preexisting relationship with an identity authority of some kind; when a user claims a certain identity, the ACME server can challenge the user asking it to go to the authority that controls the relevant name space and get a token; if the authority thinks user is legit, they will give back something cryptographically signed that the user can present to the ACME server; if the ACME server verifies that "something" it issues the user a new certificate.
+
+JP: Other possible use case: E-ZPass / FasTrack with license plate authority.
+
+JP: Therefore define a generic token, with an explicit type governed by some registry and some more things in it (like a hint).
+
+JP: Mary's approach is slightly different, we want to check with the ACME WG whether this is a good idea, and which way is preferable.
+
+(?): clarifying question: you sort of imply ACME service reaching out to the authority to get the token?
+
+JP: no
+
+| Who | Slides | A/V | Draft(s) |
+| ----|--------|-----|----------|
+| Mary | [token-identifier-and-challenges](https://datatracker.ietf.org/meeting/100/materials/slides-100-acme-acme-token-identifier-and-challenges/) | [link](https://youtu.be/n_pUc9XfjWs?t=3669) | [barnes-acme-token-challenge-00](https://tools.ietf.org/html/draft-barnes-acme-token-challenge-00) & [barnes-acme-service-provider-code-00](https://tools.ietf.org/html/draft-barnes-acme-service-provider-code-00) & [ietf-acme-service-provider-02](https://tools.ietf.org/html/draft-ietf-acme-service-provider-02) |
+
+See slides (#2-?) for an overview.
+
+MB: (audio breaks lots)
+
+JP: I'm arguing for a model with sub-typing and an IANA registry that specifies how these tokens work in particular.  The approach in Mary's draft is more focused on identifying that entity designation than on something that could potentially use different forms of tokens.
+
+CW: Jon covered it pretty well.  Service provider corresponds to the SHAKEN stuff that we've done in the STIR domain in terms of the service provider code.  If I understand Jon's proposal, the difference is that instead of having a predefined entity code, we have a type that is defined in a profile document, or something like that, and that characterises all the claims and other things.  My personal opinion is I'm fine with it.  Wish Mary was here to give her position as well.
+
+MB: I have two drafts, one generic and another which provides an example of using the former.  And in this model you woudn't need the registration and is therefore lighter weight in my opinion.  It doesn't put as much knowledge of how we're doing this in the ACME server.  So, it's totally up to the authority and its relationship with the end-entity to figure out the value of the token and the unique identifier.
+
+JP: yes, I guess it's lighter weight but since we have to assume a pre-existing association between the authority and the CA anyway, being lighter weight limits the kind of things you can end up talking about.
+
+MB: I see your point.  I was doing it in the original service provider code document, where the perspective was that the PA and CA already have that trust relationship and in the SHAKEN model we absolutely have that.  We have a more restricted model.  I can see your point, OK.
+
+JP: I think this can be useful in lots of cases in ACME, but this is a question for the room, that's what I'm interested to hear about.
+
+MB: it doesn't cost anything to not be generic.  My concern is if we are too generic we are going to get use cases that we need to evaluate and make sure it works for those situations.  People have already implemented the SKAKEN stuff and it works...
+
+RB: I think this is worth doing generically.  I've had a similar use case in mind for DNS names for a while.  Wouldn't it be nice even for the DV case if the CA could get information directly from a registry as to who holds which domain name?  It's worth at least including that case.  The thing we need to struggle with here is what the right axes for generalisation are.  The only draft I read is Jon's and it looks roughly correct to me in terms of branching on token type.  I'm broadly supportive of this approach.
+
+CW: I agree it'd be good to have a generic approach.  One thing we could do is having sort of a default mode where there is e.g, an UUID.  I can see a scenario where 80-90% of the folks using this may have pretty much the same mechanism: you don't have to necessarily define every single use case - may be something to consider.
+
+RS: we already adopted both.  If they are converging, authors should get together and merge.
+
+JP: if we merge Mary's and mine proposal, both the service provider draft and the TN document would then rely on the generic one.  And I'm happy to put in Chris's UUID case as I think it makes a lot of sense.  I love the DV case.  I think it's a win-win.
+
+RS: Mary opinions?
+
+MB: Jon, Chris and I will work together.
+
+TH: I generally like the mechanism you guys are converging on.  A slight thing on the amount of domain knowledge that you need and I think that you still require some amount of it in the CA to know something about (let's call it) the number space that you are eventually going to issue the certificate for, because I don't think you can get away from the fact that in STIR a wildcard means something and in regular domain name FQDNs it means another thing.  Let's just try and not be so generic that we expect every CA to be able to have the knowledge to issue certificate of fundamentally different types.
+
+RB: just to clarify the context: the context is within an authorisation transaction at which point you have already specified this is the specific identifier you are validating.  So, I don't think we run into the questions of wildcards, etc.
+
+TH: I agree, I'm just trying to say that the amount of state can only get so low, because you are going to be able to match it to what kind of identifier is going to be issued.  There are some of these identifiers which are functionally issued with only one reference authority and the amount of state you are willing to take is whatever the reference authority requires.
+
+CW: you also have to assume that the ACME implementation needs to support STIR certificates as well so there are a couple of levels of qualification that have to happen before you can actually give a certificate.
+
+YN (chair): guidance is talk together and come back with a single submission and then we can call for adoption, hopefully before London.
+
+JP: OK
+
+RS (chair): do we need to hum on that? Is everyone fine?  If the charter has to be adjusted we'll deal with that.  Idea is to have this as a WG doc before London.
+
+RB: there shouldn't be any need for charter adjustments.
+
+RS: It depends on how generic you guys make it.
 
 ## STAR
 | Who | Slides | A/V | Draft(s) |
@@ -224,7 +293,7 @@ TF: interaction with certificate transparency is TBD.  Diego went to the TRANS W
 
 DL: No conclusive answer whether this would pose a problem to CT or not.  What I've heard from Melinda was they are OK for documenting the problem and solution space.  What is not completely clear is where this work would be done since TRANS may be closing down in the next few  months.
 
-DL: If other that were there (EKR?) could share their impression as well?  
+DL: If others that were there (EKR?) could share their impression as well?  
 
 EKR: AD hat off.  Given clock skews forces short-term to be not below 7-days-ish, the increase in ingestion rate should be fine. So, no actual problem here, you should just go forward.
 
