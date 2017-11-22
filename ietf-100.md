@@ -7,7 +7,7 @@ Thursday, November 16 at 15:50 local time (7:50 UTC)
 | Chairs | [chair-slides](https://datatracker.ietf.org/meeting/100/materials/slides-100-acme-chair-slides/) |  [link](https://youtu.be/n_pUc9XfjWs?t=127) |
 
 - Published acme-08;
-  - OPS and GENART reviews done;
+  - OPS and Gen-ART reviews;
 - New versions for all new drafts.
 
 ## Email
