@@ -101,59 +101,106 @@ On proactive issuance, i.e., when to send the CSR?  (See slides for details abou
 
 RB: One approach is to always send the CSR twice (PR#342).  Simple logic (no branching), but unnecessary caching on client side if client always talk to a CA that caches the CSR + retransmit cost.
 (?): How do you know the two CSRs are the same?
+
 RB: This issue always exists when you send it twice
+
 EKR: Maybe... (long argument which I could not get.)
 
 RB: The other approach is CA signals client whether to do the second transmission.  Another way you can view this dicothomy is whether the first and second requests are part of the same flow, or decoupled things.  The first request is more or less a stateful thing that just gets advice and the second one (when you need a second one) as the actual issuance transaction.  The more decoupled case that EKR was mentioning just now has the benefit that you only spend as much caching and bandwidth as you need to for a given CA and transaction - you don't cache the CSR if you don't need to.  As EKR was mentioning you get this decoupling where there doesn't need to be any coupling between the first and the second requests and so you can have a slightly simpler logic on the server by just considering each request on its own without having to bind sequence of requests together.  In this case the logic on the client is a little more complicated because it has to switch between the two cases.
 
 JL: why do you need the first CSR?
+
 RB: one of the use cases for getting the CSR upfront is that of legacy APIs that you might have behind an ACME interface that require the CSR at the beginning of the process.  In this case first and second CSR are required to be the same because the backend has done everything based on the first CSR.
 
 RB: The question I have for the working group is which of these two approaches do we prefer?  Had some discussion already on the list on PR#342.  Personally I prefer PR#350 because it keeps things a little more decoupled and avoids unnecessary retransmits, but not a strong opinion.
+
 JHA: strongly prefer the former (PR#342) or, should I say, strongly disprefer the latter (PR#350).  Main reason: I want to avoid that "this CA does something this way and that CA does something that way"; the risk is proliferation of clients that only implement one behaviour and not the other and then we don't have an interoperable ecosystem.  Prefer simple and straightforward solution.
+
 EKR: not a crazy concern, but this is what interop testing is for, and actually having sensible protocol hygiene is more important. And what the security requirements are in term of what the CA needs to check between the two CSRs?
+
 JHA: CA can hash the two and make sure the hash is the same.
+
 EKR: That means you think they have to be the same, why do they have to be the same?
+
 JHA: I don't think this is necessarily true.
+
 EKR: This is concerning.
+
 JHA: In our setup and policy it's OK if they are different.  I proposed hash equality because I thought you wanted them to be identical, but if you don't think so, I don't either.
+
 RB: There are cases (legacy API) where the CA requires them to be identical.
+
 RB: If you do the checks before issuance on the second one then it doesn't matter what the first one was...
+
 EKR: yes, but only as long as the protocol says you have to issue off the second one.
+
 RB: yeah.  you say you do all your pre-issuance checks on the 2nd one.
+
 EKR: but again, protocol has to say if they are the same or not.  I see great opportunities for screwing things up in a bunch of different ways.
+
 JHA: I agree.  Would you be happy with PR#342 if we said the in the 1st CSR the public key and extensions are ignored and the only that matter is the 2nd one?
+
 EKR: I'd be happy-er
+
 RB: we could say: whatever checks the CA does on an issuance request have to be done with regard to the CSR that is sent in the 2nd request?
+
 EKR: no
+
 MT: what aspects of the CSR are needed in order to tell the client what to do?  It's only the identifiers, right?
+
 RB: issue with legacy APIs that need a real CSR.
+
 EKR: why unify the two flows?  Can't this be separated in two different flows with the server advertising which one to follow?
+
 JHA: I think only one of the flows would get implemented.  There are 50-100 ACME clients which are essentially letsencrypt clients... how to build the protocol so that clients have an incentive to work with everyone?
+
 EKR: (summary) this seems the wrong way to go
+
 JHA: ideally, first round send just the identifiers, second round send the full CSR.  we'd need to hear from CAs that have an API that needs CSR first and would have trouble adopting ACME without this flow.
+
 EKR: it seems you and I prefer the same thing (PR#342).  I still need to be convinced we need "CSR first" flow.
+
 RS (no hat): could we make the error code generic so whenever you get this error code, resubmit with the CSR and if the CSR is resent it MUST be the same one?
+
 JHA: could work
+
 RB: need to see the PR to understand exactly how it'd work
+
 RB: surprised that PR#342 works with LE workflows with wildcards?
+
 JHA: the identifier notion introduced in PR#342 is a little different from the identifiers in the authorisation objects.
+
 RB: so basically in PR#342 you'd take the collection of DNS name SANs, translate them to identifier objects and send them in?
 JHA: yes
+
 MT: I like PR#342 as well, an editorial note: be more precise the definition of identifiers (e.g., define what it means to have a wildcard ID and the format of it)
+
 RB: there seems to be a bit of mass behind PR#342.  Having a signal in the directory object to take care of legacy whereas the the core ACME is focused on going forward use cases.  Then clients can implement the legacy affordance or not.
+
 YN: let's take a hum.  Proposed way forward is accept PR#342.  Hum if you understand PR#342.
+
 room: huuuuum
+
 YN: Hum if you don't
+
 room: (silence)
+
 YN: hum if you agree this is the right way forward
+
 room: hum
+
 YN: hum if you don't agree this is the right way forward
+
 room: (silence)
+
 RB: I'll work with Daniel to get PR#342 landed and talk with folks who have legacy APIs and see if we need to add some affordance for backwards compat.
+
 RB: Have this done and review comments incorporated by early December.
+
 RS: Kathleen, assuming this is the only substantive technical issue, do you want us to do another WGLC?  Or just move it forward after like a week?
+
 KM (AD): as in TLS, do a narrowly focused WGLC on only areas of question, not the whole thing.  Would be nice to have this done soon so that it doesn't need another AD review.  The sooner the better.
+
 RB: Hope to get this done well before March.
 
 ## Telephony
