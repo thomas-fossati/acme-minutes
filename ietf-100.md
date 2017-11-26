@@ -64,7 +64,7 @@ Next steps:
 ### draft-ietf-acme-email-smime-01
 Certificates for S/MIME users.
 
-AM: Still rather raw.  Done some changes but really need to flash out how the messages are going to look like.
+AM: Still rather raw.  Done some changes but really need to flesh out how the messages are going to look like.
 
 See slides (#5) for a summary of the changes since Prague.
 
@@ -100,6 +100,7 @@ See slides (#6) for open issues.
 On proactive issuance, i.e., when to send the CSR?  (See slides for details about requirements and alternative flows.)
 
 RB: One approach is to always send the CSR twice (PR#342).  Simple logic (no branching), but unnecessary caching on client side if client always talk to a CA that caches the CSR + retransmit cost.
+
 (?): How do you know the two CSRs are the same?
 
 RB: This issue always exists when you send it twice
